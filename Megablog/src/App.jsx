@@ -3,14 +3,17 @@ import { useDispatch } from 'react-redux';
 import authService from "./appwrite/auth";
 import { login, logout } from "./store/authSlice";
 import { Header, Footer } from '../src/components';
-import { Outlet } from 'react-router-dom'; // Import Outlet from react-router-dom
+import { Outlet } from 'react-router-dom';
+
 function App() {
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
 
   useEffect(() => {
+    console.log("Checking current user...");
     authService.getCurrentUser()
       .then((userData) => {
+        console.log("User data:", userData);
         if (userData) {
           dispatch(login({ userData }));
         } else {
@@ -20,9 +23,12 @@ function App() {
       .catch((error) => {
         console.error("Error fetching user data:", error);
         dispatch(logout());
-      }) // Added error handling with catch block
-      .finally(() => setLoading(false));
-  }, [dispatch]); // Added dispatch to dependency array of useEffect
+      })
+      .finally(() => {
+        console.log("Finished loading");
+        setLoading(false);
+      });
+  }, [dispatch]);
 
   return !loading ? (
     <div className='min-h-screen flex flex-wrap content-between bg-gray-400'>
@@ -30,7 +36,7 @@ function App() {
         <Header />
         <main>
           hello
-          <Outlet /> {/* Ensure a router is set up in the parent to render child routes */}
+          {/* <Outlet /> */}
         </main>
         <Footer />
       </div>
